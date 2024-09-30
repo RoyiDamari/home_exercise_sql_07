@@ -77,13 +77,13 @@ INSERT INTO courses (course_name) VALUES
 WITH random_grades AS (
 SELECT
         s.student_id
-        (floor(random() * 8) + 1)::int as course_id,  -- Ensures course_id is between 1 and 8
-        (floor(random() * (100-55+1)) + 55)::int as grade  -- Generates integer grades between 55 and 100
+        floor(random() * 8 + 1)::int as course_id,  -- Ensures course_id is between 1 and 8
+        floor(random() * (100-55+1) + 55)::int as grade  -- Generates integer grades between 55 and 100
     FROM
         generate_series(1, 29) s(student_id)-- Student IDs from 1 to 29
 
     CROSS JOIN LATERAL
-        generate_series(1, (floor(random() * (8-3+1)) + 3)::int) g(num_grades)
+        generate_series(1, floor(random() * (8-3+1) + 3)::int) g(num_grades)
 )
 INSERT INTO grades (student_id, course_id, grade)
 SELECT DISTINCT ON (student_id, course_id) student_id, course_id, grade
