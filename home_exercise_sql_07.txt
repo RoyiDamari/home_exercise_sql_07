@@ -147,8 +147,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-
 CREATE TRIGGER update_student_and_course_trigger
 AFTER INSERT ON grades
 FOR EACH ROW
@@ -194,8 +192,6 @@ BEGIN
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
-
-
 CREATE TRIGGER update_student_and_course_on_delete_trigger
 AFTER DELETE ON grades
 FOR EACH ROW
@@ -212,46 +208,28 @@ SELECT * FROM courses WHERE course_id = 3;
 
 # Exercise 3
 CREATE VIEW view_student_grades AS
-SELECT
-    g.grade,
-    s.name AS student_name,
-    c.course_name
-FROM
-    grades g
-JOIN
-    students s ON g.student_id = s.student_id
-JOIN
-    courses c ON g.course_id = c.course_id;
+SELECT g.grade, s.name AS student_name, c.course_name
+FROM grades g
+JOIN students s ON g.student_id = s.student_id
+JOIN courses c ON g.course_id = c.course_id;
 
  -- execute
 select * from view_student_grades;
 
 CREATE VIEW view_grades_above_80 AS
-SELECT
-    g.grade,
-    s.name AS student_name,
-    c.course_name
-FROM
-    grades g
-JOIN
-    students s ON g.student_id = s.student_id
-JOIN
-    courses c ON g.course_id = c.course_id
-WHERE
-    g.grade > 80;
+SELECT g.grade, s.name AS student_name, c.course_name
+FROM grades g
+JOIN students s ON g.student_id = s.student_id
+JOIN courses c ON g.course_id = c.course_id
+WHERE g.grade > 80;
 
  -- execute
 select * from view_grades_above_80;
 
 CREATE VIEW view_largest_course AS
-SELECT
-    course_id,
-    course_name,
-    total_num_of_students
-FROM
-    courses
-ORDER BY
-    total_num_of_students DESC
+SELECT course_id, course_name, total_num_of_students
+FROM courses
+ORDER BY total_num_of_students DESC
 LIMIT 1;
 
  -- execute
@@ -262,17 +240,11 @@ CREATE OR REPLACE FUNCTION get_student_with_highest_score()
 RETURNS TABLE (student_name VARCHAR(100), max_grade REAL) AS $$
 BEGIN
     RETURN QUERY
-    SELECT
-        s.name,
-        MAX(g.grade) AS max_grade
-    FROM
-        grades g
-    JOIN
-        students s ON g.student_id = s.student_id
-    GROUP BY
-        s.name
-    ORDER BY
-        max_grade DESC
+    SELECT s.name, MAX(g.grade) AS max_grade
+    FROM grades g
+    JOIN students s ON g.student_id = s.student_id
+    GROUP BY s.name
+    ORDER BY max_grade DESC
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
